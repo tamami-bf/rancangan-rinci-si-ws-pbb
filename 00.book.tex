@@ -60,13 +60,51 @@ Priyanto Tamami, S.Kom.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{TUJUAN SISTEM}
-
 \section{SISTEM KOMPUTER}
+
+Sistem komputer yang digunakan akan terbagi menjadi 3 (tiga) yaitu :
+
+\begin{enumerate}[1.]
+  \item Sebagai \textit{server} basis data adalah sebagai berikut :
+
+    \begin{itemize}
+      \item Prosesor Intel Xeon 2,4GHz
+      \item Memori 44GB
+      \item Sistem Operasi Windows Server 2008 R2 64 bit.
+    \end{itemize}
+    
+  \item Sebagai \textit{server} aplikasi adalah sebagai berikut :
+  
+    \begin{itemize}
+      \item Prosesor Intel Xeon 3,1GHz
+      \item Memori 4GB
+      \item Sistem Operasi CentOS 6.2 64 bit
+    \end{itemize}
+    
+  \item Sebagai \textit{client} spesifikasi yang digunakan bebas, dapat menggunakan sistem komputer apapun yang dapat berkomunikasi melalui jaringan TCP/IP.
+  
+  Karena \textit{client} nantinya adalah Bank sebagai tempat pembayaran, maka sebagai sarana untuk uji coba dapat menggunakan sistem komputer apapun dengan \textit{browser} Chrome / Firefox.
+
+\end{enumerate}
 
 \section{SISTEM JARINGAN}
 
+Sistem jaringan yang nantinya dibangun akan terlihat seperti pada gambar \ref{fig:network-diagram} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./resources/diagram/network-diagram}
+  \caption{Diagram Sistem Jaringan \textit{Web Services} PBB}
+  \label{fig:network-diagram}
+\end{figure}
+
+Dari diagram tersebut, gambar awan adalah simbol untuk jaringan internet. Untuk melakukan akses ke \textit{server web service} akan melalui modem dibawahnya, kemudian akan menghubungi VPN \textit{server} terlebih dahulu untuk mendapatkan otentikasi atau akses ke dalam jaringan internal.
+
+Setelah sukses melakukan otentikasi ke \textit{server} VPN, selanjutnya \textit{client} dalam hal ini Bank akan melakukan akses ke \textit{server web service} langsung, dimana \textit{server web service} akan melakukan komunikasi dengan \textit{server} basis data.
+
 \section{SISTEM BASIS DATA}
+
+
 
 \section{PROSEDUR AKTIVITAS}
 
