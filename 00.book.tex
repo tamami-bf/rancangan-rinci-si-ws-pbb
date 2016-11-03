@@ -108,14 +108,41 @@ Sistem basis data yang digunakan adalah sama dengan sistem basis data yang digun
 
 \begin{itemize}
   \item Tabel SPPT
+  
+  Tabel SPPT ini nantinya hanya akan merubah pada kolom STATUS\_PEMBAYARAN\_SPPT, untuk isian 0 (nol) artinya nomor objek pajak (NOP) untuk tahun pajak tersebut belum dibayarkan, sedangkan isian 1 (satu) artinya NOP untuk tahun pajak tersebut sudah terbayar.
+  
   \item Tabel PEMBAYARAN\_SPPT
+  
+  Tabel PEMBAYARAN\_SPPT ini apabila ada transaksi pembayaran, akan dicatatkan lengkap pada tabel ini, NOP apa, tahun pajak kapan, besarnya nilai yang dibayarkan, tanggal pembayaran, semuanya tersimpan pada tabel ini. Namun bila terjadi permintaan proses \textit{reversal}, maka data yang tersimpan pada tabel ini akan dihapuskan.
+  
   \item Tabel LOG\_TRX\_PEMBAYARAN
+  
+  Tabel LOG\_TRX\_PEMBAYARAN ini digunakan untuk menyimpan aktivitas transaksi pembayaran yang sukses.
+  
   \item Tabel LOG\_REVERSAL
+  
+  Tabel LOG\_REVERSAL digunakan untuk menyimpan aktivitas \textit{reversal} yang berhasil dilakukan pada basis data.
 \end{itemize}
 
-Beberapa \textit{store procedure} juga dibuat untuk mempercepat eksekusi proses, \textit{store procedure} ini 
+Beberapa \textit{store procedure} juga dibuat untuk mempercepat eksekusi proses, \textit{store procedure} ini, \textit{store procedure} yang dibuat adalah sebagai berikut :
+
+\begin{itemize}
+  \item SPPT\_TERHUTANG
+  
+  \textit{Store procedure} ini akan bertugas memberikan data SPPT terhutang ke aplikasi yang melakukan eksekusi terhadapnya.
+  
+  \item PROSES\_PEMBAYARAN
+  
+  \textit{Store procedure} ini akan bertugas melakukan pencatatan pembayaran pada tabel PEMBAYARAN\_SPPT, melakukan perubahan isi kolom STATUS\_PEMBAYARAN\_SPPT pada tabel SPPT, kemudian melakukan pencatatan prosesnya pada tabel LOG\_TRX\_PEMBAYARAN.
+  
+  \item REVERSAL\_PEMBAYARAN
+  
+  \textit{Store procedure} ini bertugas melakukan penghapusan data pada tabel PEMBAYARAN\_SPPT, merubah kolom STATUS\_PEMBAYARAN\_SPPT pada tabel SPPT menjadi 0 (nol), dan melakukan pencatatan pada tabel LOG\_REVERSAL.
+\end{itemize}
 
 \section{PROSEDUR AKTIVITAS}
+
+
 
 % isinya :
 %   - diagram use-case
