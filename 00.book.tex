@@ -142,16 +142,31 @@ Beberapa \textit{store procedure} juga dibuat untuk mempercepat eksekusi proses,
 
 \section{PROSEDUR AKTIVITAS}
 
+Prosedur aktivitas yang berlaku untuk sistem \textit{web services} ini akan terbagi menjadi beberapa skenario yang dituangkan dalam beberapa diagram untuk mempermudah pemahaman alur aktivitas yang terjadi. Berikut adalah diagram yang terbentuk.
 
+\subsection{Diagram \textit{Use-Case}}
 
-% isinya :
-%   - diagram use-case
-%   - activity diagram
-%   - class diagram
-%   - entity relational diagram (db)
-%   - sequence diagram
-%   - deployment diagram
+Pembahasan skenario utama terdapat pada diagram \textit{use-case} seperti pada gambar \ref{fig:uml-use-case} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./resources/diagram/uml-use-case}
+  \caption{Diagram \textit{Use-Case}}
+  \label{fig:uml-use-case}
+\end{figure}
+
+Seperti terlihat pada diagram, skenario utama atau fitur dari \textit{web service} PBB-P2 akan melayani \textit{inquiry}, transaksi pembayaran, dan \textit{reversal} pembayaran.
+
+Secara mendalam, tiap skenario utama nantinya akan terbagi menjadi beberapa skenario rinci yang dijelaskan dalam beberapa diagram berbeda.
+
+\subsection{Diagram \textit{Activity}}
+\subsection{Diagram \textit{Entity Relational}}
+\subsection{Diagram \textit{Class}}
+\subsection{Diagram \textit{Sequence}}
+\subsection{Diagram \textit{Deployment}}
 
 \section{SUMBER DAYA MANUSIA}
+
+Karena bentuk sistem ini adalah bentuk otomasi dari pencatatan pembayaran, dimana komunikasi yang terjadi antara \textit{server} pada DPPK Kabupaten Brebes dengan \textit{server} pada Bank sebagai tempat pembayaran, tidak ada sumber daya manusia yang berinteraksi secara langsung dengan sistem ini.
 
 \end{document}
