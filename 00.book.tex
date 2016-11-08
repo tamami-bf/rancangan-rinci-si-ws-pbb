@@ -181,6 +181,20 @@ Hasil dari pengambilan data PBB-P2 pada basis data ada 2 (dua) kemungkinan, yait
 Bila data tidak ditemukan pada basis data, maka \textit{server} akan mengirimkan respon pesan bahwa data yang diminta tidak ditemukan dalam basis data, sedangkan bila data ditemukan, maka \textit{server} akan memberikan respon pesan berupa data-data yang dibutuhkan dari basis data.
 
 \subsubsection{Diagram \textit{Activity} Pencatatan Pembayaran}
+
+Diagram ini akan menjelaskan aktivitas yang terjadi pada saat \textit{request} pencatatan pembayaran diterima oleh \textit{server}, bentuk diagramnya akan terlihat seperti pada gambar \ref{fig:uml-act-bayar} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-act-bayar}
+  \caption{Diagram \textit{Activity} Pencatatan Pembayaran}
+  \label{fig:uml-act-bayar}
+\end{figure}
+
+Bila ada \textit{request} pencatatan pembayaran, langkah yang pertama adalah melakukan pencatatan alamat IP \textit{client}, kemudian melakukan pemeriksaan parameter tanggal pembayaran yang diberikan \textit{client}, apakah tanggal pembayaran terjadi setelah tanggal dan jam saat ini, atau sebelum tanggal dan jam saat ini.
+
+Bila tanggal dan jam pembayaran melewati tanggal dan jam saat ini, maka \textit{server} akan mengirimkan status kesalahan tanggal pembayaran dan proses selesai sampai disini.
+
 \subsubsection{Diagram \textit{Activity Reversal}}
 
 \subsection{Diagram \textit{Entity Relational}}
