@@ -93,7 +93,7 @@ Sistem jaringan yang nantinya dibangun akan terlihat seperti pada gambar \ref{fi
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.5\textwidth]{./resources/diagram/network-diagram}
+  \includegraphics[width=0.2\textwidth]{./resources/diagram/network-diagram}
   \caption{Diagram Sistem Jaringan \textit{Web Services} PBB}
   \label{fig:network-diagram}
 \end{figure}
@@ -195,9 +195,48 @@ Bila ada \textit{request} pencatatan pembayaran, langkah yang pertama adalah mel
 
 Bila tanggal dan jam pembayaran melewati tanggal dan jam saat ini, maka \textit{server} akan mengirimkan status kesalahan tanggal pembayaran dan proses selesai sampai disini.
 
+Ketika tanggal dan jam pembayaran sebelum tanggal dan jam saat ini, proses dilanjutkan dengan melakukan pemeriksaan tagihan pada basis data. Bila tagihan untuk data yang diminta berdasarkan Nomor Objek Pajak (NOP) dan tahun pajak telah terbayar atau nihil pada basis data, maka \textit{server} akan mengirimkan status bahwa tagihan tersebut telah terbayar atau tagihan nihil kepada \textit{client} dan proses selesai sampai disini.
+
+Pemeriksaan pun dilanjutkan apakah NOP untuk tahun pajak tersebut telah dibatalkan atau tidak. Bila telah dibatalkan maka \textit{server} akan mengirimkan status bahwa tagihan atas NOP untuk tahun pajak tersebut telah dibatalkan.
+
+Bila seleksi atau pemeriksaan atas NOP untuk tahun pajak yang diminta muncul tagihan dan belum terbayar, status tagihannya pun tidak dibatalkan, maka \textit{server} melakukan pencatatan pembayaran pada basis data, dan mengirimkan status sukses ke \textit{client} sebagai sinyal bahwa \textit{request} pencatatan pembayaran telah berhasil dilakukan. Sampai sini proses pencatatan pembayaran selesai.
+
 \subsubsection{Diagram \textit{Activity Reversal}}
 
+Diagram ini akan menjelaskan aktivitas yang terjadi apabila ternyata ada kesalahan pencatatan pembayaran, sehingga aktivitas pencatatan pembayaran yang telah terjadi harus dikembalikan pada kondisi semula. Diagram aktivitas ini adalah seperti pada gambar \ref{fig:uml-act-reversal} : 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-act-reversal}
+  \caption{Diagram \textit{Activity} Untuk \textit{Reversal} Pencatatan Pembayaran}
+  \label{fig:uml-act-reversal}
+\end{figure}
+
+Setiap ada \textit{request reversal} yang diterima, maka \textit{server} akan melakukan pencatatan alamat IP \textit{client}, kemudian akan dilakukan pemeriksaan data yang akan dilakukan \textit{reversal}, apakah data yang diinginkan ada pada basis data atau tidak.
+
+Bila data tidak ditemukan pada basis data, maka \textit{server} akan mengirimkan status ke \textit{client} bahwa data yang diminta untuk dilakukan \textit{reversal} tidak ada pada basis data.
+
+Bila data ditemukan pada basis data, maka \textit{server} akan melakukan proses \textit{reversal} dengan cara menghapus data pembayaran, dan melakukan pencatatan aktivitas \textit{reversal} pada tabel terpisah, terakhir adalah mengirimkan status ke \textit{client} bahwa proses \textit{reversal} yang diminta telah berhasil dilakukan.
+
 \subsection{Diagram \textit{Entity Relational}}
+
+Diagram ini akan memperlihatkan struktur tabel dan hubungan antar tabel yang digunakan pada sistem aplikasi \textit{web services} PBB-P2. Diagramnya seperti terlihat pada gambar \ref{fig:uml-entity-relational} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{./resources/diagram/uml-entity-relational}
+  \caption{Diagram \textit{Entity Relational}}
+  \label{fig:uml-entity-relational}
+\end{figure}
+
+Pada tabel SPPT akan berisi seluruh tagihan PBB-P2 untuk seluruh tahun pajak. Tabel ini akan menjadi induk atau acuan dari tabel-tabel yang nantinya digunakan pada sistem ini. Namun kondisi yang nantinya berubah karena interaksi sistem \textit{web service} dengan basis data dari tabel SPPT ini hanya pada kolom STATUS\_PEMBAYARAN\_SPPT.
+
+Tabel yang kedua adalah tabel PEMBAYARAN\_SPPT, yang menjadi tempat tampungan data dari transaksi pembayaran. Seluruh penerimaan / pembayaran PBB-P2 yang terjadi harus tercatat pada tabel ini. Kolom KD\_PROPINSI, KD\_DATI2, KD\_KECAMATAN, KD\_KELURAHAN, KD\_BLOK, NO\_URUT, KD\_JNS\_OP, dan THN\_PAJAK\_SPPT akan mengacu pada tabel SPPT.
+
+Tabel ketiga adalah tabel LOG\_TRX\_PEMBAYARAN, tabel ini berfungsi untuk melakukan pencatatan aktivitas sistem, setelah melakukan perubahan pada kolom STATUS\_PEMBAYARAN\_SPPT milik tabel SPPT dari 0 (nol) menjadi 1 (satu), dan setelah melakukan pengisian data pada tabel PEMBAYARAN\_SPPT, maka dicatatkan pula informasi aktivitasnya pada tabel LOG\_TRX\_PEMBAYARAN.
+
+
+
 \subsection{Diagram \textit{Class}}
 \subsection{Diagram \textit{Sequence}}
 \subsection{Diagram \textit{Deployment}}
