@@ -235,7 +235,7 @@ Tabel yang kedua adalah tabel PEMBAYARAN\_SPPT, yang menjadi tempat tampungan da
 
 Tabel ketiga adalah tabel LOG\_TRX\_PEMBAYARAN, tabel ini berfungsi untuk melakukan pencatatan aktivitas sistem, setelah melakukan perubahan pada kolom STATUS\_PEMBAYARAN\_SPPT milik tabel SPPT dari 0 (nol) menjadi 1 (satu), dan setelah melakukan pengisian data pada tabel PEMBAYARAN\_SPPT, maka dicatatkan pula informasi aktivitasnya pada tabel LOG\_TRX\_PEMBAYARAN.
 
-
+Tabel berikutnya adalah tabel LOG\_REVERSAL, tabel ini berfungsi untuk mencatat aktivitas \textit{reversal} yang terjadi, setelah kondisi kolom STATUS\_PEMBAYARAN\_SPPT pada tabel SPPT berubah dari 1 (satu) menjadi 0 (nol, dan setelah penghapusan data pada tabel PEMBAYARAN\_SPPT.
 
 \subsection{Diagram \textit{Class}}
 \subsection{Diagram \textit{Sequence}}
