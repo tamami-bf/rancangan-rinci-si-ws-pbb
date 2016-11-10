@@ -334,7 +334,37 @@ kelas-kelas tersebut akan dijelaskan sebagai berikut :
 Diagram \textit{sequence} akan menggambarkan interaksi antar kelas berdasarkan skenario-skenario yang telah disusun sehingga sistem aplikasi \textit{web service} nantinya akan berjalan sebagaimana mestinya. Adapun skenario-skenario tersebut akan dibagi seperti berikut ini :
 
 \subsubsection{Skenario Konfigurasi \textit{Spring Framework}}
+
+Pada skenario ini akan dijelaskan bagaimana tiap kelas berinteraksi pada saat sistem aplikasi memulai inisialisasi awal. Diagram \textit{sequence} untuk skenario ini seperti pada gambar \ref{fig:uml-seq-konf} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./resources/diagram/uml-seq-konf}
+  \caption{Diagram \textit{Sequence} Untuk Konfigurasi \textit{Spring Framework}}
+  \label{fig:uml-seq-konf}
+\end{figure}
+
+Saat inisialisasi awal, \textit{servlet container} akan mengeksekusi kelas AppInitializer, kemudian dilanjutkan dengan kelas AppConfig, kemudian kelas HibernateController, dan akhirnya sampai ke kelas SpptRestController.
+
+Sampai disini, tahap inisialisasi sistem \textit{web service} selesai, untuk selanjutnya melakukan skenario-skenario selanjutnya.
+
 \subsubsection{Skenario \textit{Inquiry} Gagal Karena Tahun Pajak Bukan Angka}
+
+Skenario ini akan menceritakan proses \textit{inquiry} yang dilakukan oleh \textit{client}, namun gagal karena parameter tahun pajak yang diberikan oleh \textit{client} terdapat karakter yang bukan angka. Diagram \textit{sequence} untuk skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-inq-thn-not-valid} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./resources/diagram/uml-seq-inq-thn-not-valid}
+  \caption{Diagram \textit{Sequence} Yang Gagal Karena Tahun Pajak Bukan Angka}
+  \label{fig:uml-seq-inq-thn-not-valid}
+\end{figure}
+
+Berawal dari \textit{method} getDataSppt milik kelas SpptRestController, karena \textit{method} inilah yang menjadi awal tiap skenario \textit{inquiry} terjadi, kemudian di dalam \textit{method} ini melakukan pemeriksaan parameter tahun pajak, bila pada parameter tahun pajak terdapat karakter bukan angka, maka \textit{method} ini akan membuat instan dari kelas StatusInq yang berisi pesan bahwa proses \textit{request inquiry} telah gagal dilakukan karena parameter tahun pajak mengandung karakter bukan angka. 
+
+Instan dari kelas StatusInq akan diubah menjadi format JSON secara otomatis oleh pustaka Jackson, dan dikirimkan ke \textit{client} sebagai respon. Sampai disini proses selesai.
+
+Bila parameter tahun pajak telah valid, maksudnya tidak mengandung karakter bukan angka, maka proses akan dilanjutkan ke skenario-skenario \textit{inquiry} yang lain.
+
 \subsubsection{Skenario \textit{Inquiry} Gagal Karena Data Tidak Ditemukan}
 \subsubsection{Skenario \textit{Inquiry} Gagal Karena Kesalahan \textit{Server}}
 \subsubsection{Skenario \textit{Inquiry} Yang Sukses}
