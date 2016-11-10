@@ -238,7 +238,116 @@ Tabel ketiga adalah tabel LOG\_TRX\_PEMBAYARAN, tabel ini berfungsi untuk melaku
 Tabel berikutnya adalah tabel LOG\_REVERSAL, tabel ini berfungsi untuk mencatat aktivitas \textit{reversal} yang terjadi, setelah kondisi kolom STATUS\_PEMBAYARAN\_SPPT pada tabel SPPT berubah dari 1 (satu) menjadi 0 (nol, dan setelah penghapusan data pada tabel PEMBAYARAN\_SPPT.
 
 \subsection{Diagram \textit{Class}}
+
+Diagram ini akan memperlihatkan kelas atau objek apa saja yang terbentuk untuk membangun sistem \textit{web service} ini dapat bekerja sebagaimana mestinya, diagram \textit{class} adalah sebagaimana gambar \ref{fig:uml-class} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{./resources/diagram/uml-class}
+  \caption{Diagram \textit{Class}}
+  \label{fig:uml-class}
+\end{figure}
+
+kelas-kelas tersebut akan dijelaskan sebagai berikut :
+
+\begin{enumerate}[1.]
+  \item \textit{Interface} AbstractAnnotationConfigDispatcherServletInitializer
+  
+  \textit{Interface} ini sebetulnya bawaan dari \textit{framework} Spring yang digunakan untuk melakukan inisialisasi parameter awal dari sistem yang akan digunakan. Artinya setiap kelas yang melakukan \textit{implement} terhadap \textit{interface} ini nantinya akan digunakan sebagai pintu masuk awal sistem melakukan pengaturan-pengaturan / inisialisasi.
+  
+  \item Kelas AppInitializer
+  
+  Kelas inilah yang mengimplementasikan \textit{interface} AbstractAnnotationConfigDispatcherServletInitializer, sehingga dari kelas inilah sistem akan memulai aktivitasnya.
+  
+  \item Kelas AppConfig
+  
+  Kelas ini digunakan sebagai tempat untuk konfigurasi sistem \textit{web service} yang nantinya berjalan. Setelah sistem melakukan inisialisasi awal di kelas AppInitializer, kelas AppConfig ini nantinya melakukan konfigurasi kelas-kelas mana yang akan berhubungan dengan basis data, kelas mana yang nantinya melakukan konfigurasi hubungan antar kelas dan cara interaksinya.
+  
+  \item Kelas HibernateConfiguration
+  
+  Kelas ini nantinya menjadi tempat konfigurasi \textit{framework} Hibernate sebagai penghubung antara sistem aplikasi dengan basis data.
+  
+  \item Kelas SpptRestController
+  
+  Kelas ini adalah tempatnya sistem aplikasi berhubungan dengan \textit{client}. Setiap \textit{request} yang dikirim oleh \textit{client} akan masuk melalui kelas ini.
+  
+  \item \textit{Interface} SpptServices
+  
+  \textit{Interface} ini nantinya akan menyiapkan beberapa \textit{method} yang akan diimplementasikan di kelas turunannya, sehingga kelas turunan dapat mengolah dan menyajikan berbagai data yang berhubungan dengan informasi SPPT. \textit{Interface} ini pula yang nantinya menghubungkan kelas SpptRestController dengan beberapa \textit{service} yang dibutuhkan dan berhubungan dengan SPPT.
+  
+  \item \textit{Interface} PembayaranServices
+  
+  \textit{Interface} ini seperti \textit{interface} SpptServices, yaitu menyiapkan \textit{method} yang akan diimplementasikan di kelas turunan yang dapat mengolah dan menyajikan atau memproses data yang berhubungan dengan proses pencatatan pembayaran.
+  
+  \item \textit{Interface} ReversalServices
+  
+  Sebagaimana \textit{interface} SpptServices dan PembayaranServices, \textit{interface} ini pun hanya menyiapkan \textit{method} yang akan diimplementasikan di kelas turunan yang berhubungan dengan kegiatan \textit{reversal} pembayaran.
+  
+  \item Kelas SpptServicesImpl
+  
+  Kelas ini adalah implementasi dari \textit{interface} SpptServices yang akan mengolah dan menyajikan data terkait dengan \textit{request inquiry} data SPPT. 
+  
+  \item Kelas PembayaranServicesImpl
+  
+  Kelas ini adalah implementasi dari \textit{interface} PembayaranServices yang akan mengolah dan menyajikan data terkait dengan proses pencatatan pembayaran PBB-P2.
+  
+  \item Kelas ReversalServicesImpl
+  
+  Kelas ini adalah implementasi dari \textit{interface} ReversalServices yang akan mengolah dan menyajikan data terkait dengan proses \textit{reversal} pembayaran PBB-P2.
+  
+  \item Kelas StatusInq
+  
+  Kelas ini akan menampung informasi untuk proses \textit{inquiry}, nantinya dari kelas ini akan secara otomatis menggunakan pustaka Jackson diubah ke format JSON sebagai bentuk komunikasi ke \textit{client}.
+  
+  \item Kelas StatusTrx
+  
+  Kelas ini akan menampung informasi yang dihasilkan dari aktivitas pencatatan transaksi pembayaran, kelas ini pun nantinya akan diubah otomatis oleh pustaka Jackson ke bentuk JSON sebagai format komunikasi dengan \textit{client}.
+  
+  \item Kelas StatusRev
+  
+  Kelas ini akan menampung informasi yang dihasilkan dari proses \textit{reversal} pembayaran, kelas ini juga akan diubah secara otomatis ke bentuk JSON oleh pustaka Jackson sebagai format baku komunikasi dengan \textit{client}.
+  
+  \item \textit{Interface} StoreProceduresDao
+  
+  \textit{Interface} ini akan menyiapkan \textit{method} yang digunakan oleh kelas turunan sebagai bahan untuk berkomunikasi dengan basis data. Tujuan lain dari pembentukan \textit{interface} ini pun untuk mempermudah \textit{framework} melakukan pemetaan mana kelas yang nantinya akan berhubungan dengan basis data.
+  
+  \item Kelas StoreProceduresDaoImpl
+  
+  Kelas ini adalah implementasi dari \textit{interface} StoreProceduresDao, nantinya setiap eksekusi \textit{store procedure} milik basis data akan dilakukan dari kelas ini. Dari kelas ini pun hasilnya nanti didapat dan dikembalikan ke \textit{client}.
+  
+  \item Kelas Sppt
+  
+  Kelas ini nantinya akan menampung hasil dari pemanggilan \textit{store procedure} milik basis data untuk aktivitas \textit{inquiry} data PBB-P2.
+  
+  \item Kelas PembayaranSppt
+  
+  Kelas ini akan menampung hasil dari pemanggilan \textit{store procedure} milik basis data untuk proses pencatatan pembayaran PBB-P2.
+  
+  \item Kelas ReversalPembayaran
+  
+  Kelas ini akan menampung hasil dari pemanggilan \textit{store procedure} milik basis data untuk proses \textit{reversal} pembayaran PBB-P2.
+  
+\end{enumerate}
+
 \subsection{Diagram \textit{Sequence}}
+
+Diagram \textit{sequence} akan menggambarkan interaksi antar kelas berdasarkan skenario-skenario yang telah disusun sehingga sistem aplikasi \textit{web service} nantinya akan berjalan sebagaimana mestinya. Adapun skenario-skenario tersebut akan dibagi seperti berikut ini :
+
+\subsubsection{Skenario Konfigurasi \textit{Spring Framework}}
+\subsubsection{Skenario \textit{Inquiry} Gagal Karena Tahun Pajak Bukan Angka}
+\subsubsection{Skenario \textit{Inquiry} Gagal Karena Data Tidak Ditemukan}
+\subsubsection{Skenario \textit{Inquiry} Gagal Karena Kesalahan \textit{Server}}
+\subsubsection{Skenario \textit{Inquiry} Yang Sukses}
+\subsubsection{Skenario Transaksi Pembayaran Gagal Karena Jam Pembayaran Melebihi Jam Pencatatan}
+\subsubsection{Skenario Transaksi Pembayaran Gagal Karena Tagihan Telah Terbayar atau Nihil}
+\subsubsection{Skenario Transaksi Pembayaran Gagal Karena Telah Dibatalkan}
+\subsubsection{Skenario Transaksi Pembayaran Gagal Karena Kesalahan \textit{Server}}
+\subsubsection{Skenario Transaksi Pembayaran Yang Sukses}
+\subsubsection{Skenario \textit{Reversal} Gagal Karena Data Yang Diminta Tidak Ada}
+\subsubsection{Skenario \textit{Reversal} Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda}
+\subsubsection{Skenario \textit{Reversal} Gagal Karena Kesalahan \textit{Server}}
+\subsubsection{Skenario \textit{Reversal} Yang Sukses}
+
 \subsection{Diagram \textit{Deployment}}
 
 \section{SUMBER DAYA MANUSIA}
