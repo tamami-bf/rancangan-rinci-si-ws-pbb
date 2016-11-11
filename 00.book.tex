@@ -355,7 +355,7 @@ Skenario ini akan menceritakan proses \textit{inquiry} yang dilakukan oleh \text
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.5\textwidth]{./resources/diagram/uml-seq-inq-thn-not-valid}
-  \caption{Diagram \textit{Sequence} Yang Gagal Karena Tahun Pajak Bukan Angka}
+  \caption{Diagram \textit{Sequence} Untuk \textit{Inquiry} Yang Gagal Karena Tahun Pajak Mengandung Karakter Bukan Angka}
   \label{fig:uml-seq-inq-thn-not-valid}
 \end{figure}
 
@@ -366,12 +366,124 @@ Instan dari kelas StatusInq akan diubah menjadi format JSON secara otomatis oleh
 Bila parameter tahun pajak telah valid, maksudnya tidak mengandung karakter bukan angka, maka proses akan dilanjutkan ke skenario-skenario \textit{inquiry} yang lain.
 
 \subsubsection{Skenario \textit{Inquiry} Gagal Karena Data Tidak Ditemukan}
+
+Skenario ini akan menjelaskan proses \textit{inquiry} yang gagal karena data tidak ditemukan pada sistem basis data. Diagram \textit{sequence} untuk menjelaskan skenario ini adalah seperti pada gambar \ref{fig:uml-seq-inq-not-any} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-inq-not-any}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Inquiry} Yang Gagal Karena Data Tidak Ditemukan}
+  \label{fig:uml-seq-inq-not-any}
+\end{figure}
+
+Awalnya \textit{request inquiry} dari \textit{client} akan diterima oleh \textit{method} getDataSppt milik kelas SpptRestController, kemudian memanggil \textit{method} getSpptByNopThn milik kelas SpptServicesImpl sebagai tempat pemrosesan data \textit{inquiry}, kemudian \textit{method} getSpptByNopThn ini memanggil \textit{method} getDataSppt milik kelas StoreProceduresDaoImpl untuk melakukan pengambilan data pada basis data.
+
+\textit{Method} getDataSppt milik kelas StoreProceduresDaoImpl kemudian melakukan eksekusi terhadap \textit{store procedure} milik sistem basis data melalui \textit{method} executeUpdate milik kelas CallableStatement, kemudian mengambil hasilnya dari \textit{method} getObject milik kelas yang sama.
+
+Hasil dari pemanggilan \textit{store procedure} milik basis data ini sesuai skenario, datanya tidak ada pada basis data, sehingga dalam \textit{method} getDataSppt milik kelas StoreProceduresDaoImpl akan membuat instan kelas StatusInq dan mengisikan informasi bahwa data yang diinginkan tidak ada pada basis data, kemudian mengembalikan instan kelas StatusInq ke kelas SpptRestController sebagai bahan respon ke \textit{client}.
+
 \subsubsection{Skenario \textit{Inquiry} Gagal Karena Kesalahan \textit{Server}}
+
+Skenario ini akan menjelaskan proses \textit{inquiry} yang gagal karena terjadi kesalahan pada \textit{server}. Diagram \textit{sequence} untuk menggambarkan skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-inq-db-error} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-inq-db-error}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Inquiry} Yang Gagal Karena Kesalahan \textit{Server}}
+  \label{fig:uml-seq-inq-db-error}
+\end{figure}
+
+\textit{Request} dari \textit{client} nantinya akan masuk ke \textit{method} getDataSppt milik kelas SpptRestController, dari sini akan memanggil kembali \textit{method} getSpptByNopThn milik kelas SpptServicesImpl sebagai tempat pengolah data \textit{inquiry}.
+
+Dalam \textit{method} getSpptByNopThn milik kelas SpptServicesImpl akan memanggil \textit{method} yang lain yaitu getDataSppt milik kelas StoreProceduresDaoImpl yang akan melakukan tugasnya untuk berkomunikasi dengan basis data.
+
+Dalam \textit{method} getDataSppt milik kelas StoreProceduresDaoImpl akan melakukan eksekusi terhadap \textit{store procedure} milik sistem basis data dengan memanggil \textit{method} executeUpdate milik kelas CallableStatement, namun komunikasi ini mengalami gangguan, sehingga \textit{method} getDataSppt akan membuat instan dari kelas StatusInq dan memberikan informasi bahwa komunikasi antara \textit{server} aplikasi dengan \textit{server} basis data mengalami kegagalan. 
+
+Akhirnya instan kelas StatusInq ini dikembalikan ke kelas SpptRestController dan diproses sebagai respon ke \textit{client}. Sampai disini skenario selesai.
+
 \subsubsection{Skenario \textit{Inquiry} Yang Sukses}
+
+Skenario ini akan menjelaskan proses yang terjadi saat \textit{request inquiry} data berhasil dilakukan dan \textit{client} mendapatkan hasilnya. Diagram \textit{sequence} untuk menggambarkan aktivitas ini seperti terlihat pada gambar \ref{fig:uml-seq-inquiry} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-inquiry}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Inquiry} Yang Berhasil Dilakukan}
+  \label{fig:uml-seq-inquiry}
+\end{figure}
+
+Berawal dari proses \textit{request} yang masuk ke \textit{method} getDataSppt milik kelas SpptRestController, kemudian beralih ke \textit{method} getSpptByNopThn milik kelas SpptServicesImpl yang bertugas mengolah dan memproses data \textit{inquiry}, karena tidak ada yang diproses, maka hanya memanggil \textit{method} getDataSppt milik kelas StoreProceduresDaoImpl.
+
+Dalam \textit{method} getDataSppt milik kelas StoreProceduresDaoImpl akan melakukan eksekusi terhadap \textit{store procedure} pada basis data dengan memanggil \textit{method} executeUpdate milik kelas CallableStatement, dan mengambil hasilnya dengan \textit{method} getObject milik kelas yang sama.
+
+Hasil dari pengambilan data melalui \textit{store procedure} ini kemudian disimpan dalam instan dari kelas Sppt dengan melakukan pemanggilan \textit{method} set pada propertinya. Terakhir adalah membuat instan kelas StatusInq dan memasukkan informasi bahwa \textit{request inquiry} telah berhasil dan memasukan instan kelas Sppt ke dalam instan kelas StatusInq.
+
+Sebagai respon ke \textit{client}, maka instan kelas StatusInq dikembalikan ke kelas SpptRestController untuk selanjutnya diubah dalam format JSON oleh pustaka Jackson.
+
 \subsubsection{Skenario Transaksi Pembayaran Gagal Karena Jam Pembayaran Melebihi Jam Pencatatan}
+
+Skenario ini akan menceritakan interaksi yang terjadi antar kelas bila ada kondisi pembayaran yang gagal karena parameter jam dan tanggal pembayaran yang diberikan oleh \textit{client} lebih baru atau melewati waktu saat ini. Diagram \textit{sequence} yang menggambarkan skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-trx-tgl-bayar-error} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.5\textwidth]{./resources/diagram/uml-seq-trx-tgl-bayar-error}
+  \caption{Diagram \textit{Sequence} Untuk Skenario Transaksi Pembayaran Yang Gagal Karena Jam Pembayaran Melebihi Jam Pencatatan}
+  \label{fig:uml-seq-trx-tgl-bayar-error}
+\end{figure}
+
+\textit{Request} pencatatan pembayaran yang datang dari \textit{client} akan masuk ke \textit{method} prosesPembayaran milik kelas SpptRestController yang kemudian dilakukan pemeriksaan parameter tanggal pembayaran ditemukan bahwa parameter tersebut melebihi tanggal dan jam saat ini, maka \textit{method} prosesPembayaran dalam kelas SpptRestController ini langsung membuat instan dari kelas StatusTrx dan memberikan informasi bahwa parameter tanggal dan jam pembayaran telah melewati tanggal dan jam pencatatan saat ini.
+
+Instan dari kelas StatusTrx secara otomatis diubah ke format JSON oleh pustaka Jackson sebagai bentuk respon ke \textit{client}. Sampai disini skenario selesai.
+
 \subsubsection{Skenario Transaksi Pembayaran Gagal Karena Tagihan Telah Terbayar atau Nihil}
+
+Skenario ini akan menceritakan \textit{request} pencatatan transaksi pembayarna yang gagal karena tagihan telah terbayar atau memang tidak ada tagihan. Diagram \textit{sequence} yang menggambarkan skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-trx-nihil} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-trx-nihil}
+  \caption{Diagram \textit{Sequence} Untuk Skenario Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Terbayar Atau Tagihan Nihil}
+  \label{fig:uml-seq-trx-nihil}
+\end{figure}
+
+Berawal dari \textit{method} prosesPembayaran dalam kelas SpptRestController, dilanjutkan ke pemanggilan \textit{method} prosesPembayaran dalam kelas PembayaranServicesImpl yang fungsinya untuk mengolah data pembayaran, selanjutnya berlanjut ke \textit{method} prosesPembayaran dalam kelas StoreProceduresDaoImpl yang akan berhubungan dengan sistem basis data.
+
+Dalam \textit{method} prosesPembayaran milik kelas StoreProceduresDaoImpl akan melakukan eksekusi \textit{store procedure} milik sistem basis data dengan memanggil \textit{method} executeUpdate milik kelas CallableStatement, dan mengambil hasilnya dengan \textit{method} getObject milik kelas yang sama.
+
+Hasil dari eksekusi \textit{store procedure} ini menghasilkan status bahwa data untuk Nomor Objek Pajak (NOP) pada tahun pajak yang diinginkan tagihannya telah terbayar atau tidak ada tagihan. Sehingga langkah selanjutnya yang dilakukan dalam \textit{method} prosesPembayaran milik kelas StoreProceduresDaoImpl akan membentuk instan dari kelas StatusTrx dan mengisikan pesan bahwa data yang diminta telah terbayar atau nihil. Instan dari kelas StatusTrx ini nantinya dikirimkan ke kelas SpptRestController sebagai bahan \textit{respon} ke \textit{client}. Sampai disini skenario selesai.
+
 \subsubsection{Skenario Transaksi Pembayaran Gagal Karena Telah Dibatalkan}
+
+Skenario ini akan menjelaskan alur komunikasi bila ada \textit{request} transaksi pembayaran tetapi gagal karena data tagihan telah dibatalkan. Diagram \textit{sequence} untuk skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-trx-batal} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-trx-batal}
+  \caption{Diagram \textit{Sequence} Untuk Skenario Transaksi Pembayaran Yang Gagal Karena Tagihan Telah Dibatalkan}
+  \label{fig:uml-seq-trx-batal}
+\end{figure}
+
+Diawali dari \textit{method} prosesPembayaran pada kelas SpptRestController, karena setiap \textit{request} yang masuk untuk melakukan pencatatan transaksi pembayaran akan melalui \textit{method} ini. Kemudian dilakukan pemanggilan \textit{method} prosesPembayaran milik kelas PembayaranServicesImpl, dilanjutkan dengan pemanggilan \textit{method} prosesPembayaran milik kelas StoreProceduresDaoImpl.
+
+Di dalam \textit{method} prosesPembayaran milik kelas StoreProceduresDaoImpl, akan melakukan eksekusi terhadap \textit{store procedure} milik sistem basis data dengan menggunakan \textit{method} executeUpdate dan mengambil hasilnya dengan \textit{method} getObject. 
+
+Karena hasil yang diterima dari basis data adalah bahwa tagihan untuk Nomor Objek Pajak (NOP) pada tahun pajak yang diinginkan telah dibatalkan, maka di dalam \textit{method} prosesPembayaran milik kelas StoreProceduresDaoImpl ini membuat instan dari kelas StatusTrx dan mengisikan dengan informasi tersebut. 
+
+Kemudian kelas StatusTrx ini dikirimkan ke kelas SpptRestController sebagai bahan respon ke \textit{client}.
+
 \subsubsection{Skenario Transaksi Pembayaran Gagal Karena Kesalahan \textit{Server}}
+
+Skenario ini akan menceritakan kondisi \textit{request} pencatatan transaksi pembayaran karena telah terjadi kesalahan di sisi \textit{server}. Diagram \textit{sequence} yang menggambarkan skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-trx-db-error} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-trx-db-error}
+  \caption{Diagram \textit{Sequence} Untuk Skenario Transaksi Pembayaran Yang Gagal Karena Adanya Kesalahan \textit{Server}}
+  \label{fig:uml-seq-trx-db-error}
+\end{figure}
+
+
+
 \subsubsection{Skenario Transaksi Pembayaran Yang Sukses}
 \subsubsection{Skenario \textit{Reversal} Gagal Karena Data Yang Diminta Tidak Ada}
 \subsubsection{Skenario \textit{Reversal} Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda}
