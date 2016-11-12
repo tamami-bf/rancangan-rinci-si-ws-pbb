@@ -51,7 +51,7 @@
 \begin{center}
 {\large RANCANGAN RINCI SISTEM \textit{WEB SERVICES} SEBAGAI CARA KOMUNIKASI DENGAN TEMPAT PEMBAYARAN DALAM PENCATATAN PEMBAYARAN PAJAK BUMI DAN BANGUNAN PERDESAAN DAN PERKOTAAN DI KABUPATEN BREBES.}
 \\[1cm]
-DD MMM 2016\\
+14 November 2016\\
 Priyanto Tamami, S.Kom.
 \end{center}
 
@@ -508,11 +508,97 @@ Pada \textit{method} prosesPembayaran milik kelas StoreProceduresDaoImpl kemudia
 Kemudian instan dari kelas PembayaranSppt dimasukkan dalam instan kelas StatusTrx yang kemudian dikirimkan ke kelas SpptRestController sebagai bahan respon ke \textit{client}.
 
 \subsubsection{Skenario \textit{Reversal} Gagal Karena Data Yang Diminta Tidak Ada}
+
+Skenario ini akan menceritakan alur komunikasi yang terjadi saat ada \textit{request reversal} dari \textit{client} tetapi gagal karena data yang diminta tidak ada pada sistem basis data. Diagram \textit{sequence} untuk menggambarkan skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-rev-not-any} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-rev-null}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Reversal} Yang Gagal Karena Data Yang Diminta Tidak Ada}
+  \label{fig:uml-seq-rev-not-any}
+\end{figure}
+
+Berawal dari \textit{method} prosesReversal milik kelas SpptRestController, kemudian dilanjutkan dengan pemanggilan \textit{method} prosesReversal milik kelas ReversalServicesImpl yang bertugas melakukan proses data berkaitan dengan \textit{reversal} pembayaran.
+
+Dalam \textit{method} prosesReversal milik kelas ReversalServicesImpl akan memanggil \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl yang bertugas melakukan komunikasi dengan sistem basis data.
+
+Pada \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl, aplikasi akan melakukan eksekusi terhadap \textit{store procedure} pada sistem basis data dengan memanggil \textit{method} executeUpdate milik kelas CallableStatement, dan mendapatkan hasilnya dengan memanggil \textit{method} getObject milik kelas yang sama.
+
+Namun atas dasar parameter yang diberikan oleh \textit{client}, ternyata pada basis data tidak ada data dengan kriteria tersebut sehingga dalam \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl langsung membuat instan dari kelas StatusRev dengan memberikan keterangan bahwa data yang diminta untuk dilakukan proses \textit{reversal} tidak ada pada basis data, dan mengirimkan instan dari kelas StatusRev ini ke kelas SpptRestController sebagai bahan respon ke \textit{client}. Sampai disini proses dari skenario ini selesai.
+
 \subsubsection{Skenario \textit{Reversal} Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda}
+
+Skenario ini akan menceritakan alur komunikasi dari proses \textit{reversal} yang gagal karena data pembayaran tercatat ganda pada basis data. Diagram \textit{sequence} untuk skenario ini sama persis dengan skenario sebelumnya, yaitu skenario \textit{reversal} yang gagal karena data yang diminta tidak ada pada basis data. Diagram \textit{sequence} untuk menggambarkan proses dari skenario ini adalah seperti pada gambar \ref{fig:uml-seq-rev-double} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-rev-null}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Reversal} Yang Gagal Karena Ada Data Pembayaran Yang Tercatat Ganda}
+  \label{fig:uml-seq-rev-double}
+\end{figure}
+
+Berawal dari \textit{method} prosesReversal milik kelas SpptRestController yang didalamnya memanggil \textit{method} prosesReversal milik kelas ReversalServicesImpl, dalam \textit{method} ini akan memanggil \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl sebagai \textit{method} yang bertugas melakukan komunikasi dengan basis data.
+
+Pada \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl akan melakukan eksekusi terhadap \textit{store procedure} milik basis data dengan memanggil \textit{method} executeUpdate milik kelas CallableStatement dan mengambil hasilnya dengan memanggil \textit{method} getObject milik kelas yang sama.
+
+Perbedaan dengan skenario sebelumnya adalah pada saat pengambilan hasil dari eksekusi \textit{store procedure}, pada skenario ini \textit{store procedure} akan memberikan informasi bahwa transaksi pembayaran untuk data yang diminta tercatat 2 (dua) kali pada basis data. Sehingga pada \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl akan membuat instan dari kelas StatusRev dan memberikan catatan informasi didalamnya bahwa proses \textit{reversal} yang diminta tidak dapat diselesaikan karena ada pencatatan pembayaran ganda pada basis data.
+
+Kemudian instan dari kelas StatusRev ini dikirimkan ke kelas SpptRestController sebagai bahan respon ke \textit{client}, sampai disini proses untuk skenario ini selesai.
+
 \subsubsection{Skenario \textit{Reversal} Gagal Karena Kesalahan \textit{Server}}
+
+Skenario ini akan menceritakan proses \textit{reversal} yang gagal karena terjadi kesalahan di sisi \textit{server}. Diagram \textit{sequence} yang menggambarkan skenario ini seperti terlihat pada gambar \ref{fig:uml-seq-rev-db-error} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-seq-rev-db-error}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Reversal} Yang Gagal Karena Ada Kesalahan \textit{Server}}
+  \label{fig:uml-seq-rev-db-error}
+\end{figure}
+
+Seperti biasa, proses \textit{reversal} akan diawali dari \textit{method} prosesReversal milik kelas SpptRestController, yang di dalamnya akan memanggil \textit{method} prosesReversal milik kelas ReversalServicesImpl, yang di dalamnya akan memanggil \textit{method} lain yaitu \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl sebagai \textit{method} yang akan menghubungkan atau mengeksekusi \textit{store procedure} pada basis data.
+
+Untuk melakukan eksekusi \textit{store procedure} pada sistem basis data, di dalam \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl akan memanggil \textit{method} executeUpdate milik kelas CallableStatement, namun karena terjadi kesalahan komunikasi antara \textit{server} aplikasi dengan \textit{server} basis data, maka prosesnya akan terhenti sehingga \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl akan membuat instan dari kelas StatusRev dan mengisikannya dengan informasi kegagalan komunikasi dengan \textit{server} basis data.
+
+Kemudian instan dari kelas StatusRev ini dikirimkan ke kelas SpptRestController sebagai bahan respon ke \textit{client}. Sampai disini proses dari skenario ini telah selesai.
+
 \subsubsection{Skenario \textit{Reversal} Yang Sukses}
 
+Skenario ini akan menceritakan alur komunikasi proses \textit{reversal} yang sukses dilakukan. Diagram \textit{sequence} untuk menggambarkan skenario ini adalah seperti terlihat pada gambar \ref{fig:uml-seq-rev} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{./resources/diagram/uml-seq-rev}
+  \caption{Diagram \textit{Sequence} Untuk Skenario \textit{Reversal} Yang Sukses}
+  \label{fig:uml-seq-rev}
+\end{figure}
+
+Diawali dari \textit{method} prosesReversal milik kelas SpptRestController, kemudian di dalamnya memanggil \textit{method} prosesReversal milik kelas ReversalServicesImpl. 
+
+Kemudian di dalam \textit{method} prosesReversal milik kelas ReversalServicesImpl akan memanggil \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl yang bertugas melakukan komunikasi dengan basis data.
+
+Di dalam \textit{method} reversalPembayaran milik kelas StoreProceduresDaoImpl akan melakukan eksekusi terhadap \textit{store procedure} pada basis data dengan memanggil \textit{method} executeUpdate milik kelas CallableStatement, dan mengambil hasilnya dengan memanggil \textit{method} getObject.
+
+Hasil yang didapat dari pemanggilan \textit{store procedure} milik basis data akan disimpan dalam instan kelas ReversalPembayaran, yang kemudian dibuatkan pula instan kelas StatusRev dan memasukkan informasi di dalamnya bahwa proses \textit{reversal} telah berhasil dan data yang dilakukan \textit{reversal} ada pada kelas ReversalPembayaran yang juga dimasukkan pada instan kelas StatusRev. 
+
+Kemudian instan kelas StatusRev dikirim ke kelas SpptRestController sebagai bahan respon ke \textit{client}, sampai disini proses dari skenario \textit{reversal} yang sukses selesai.
+
 \subsection{Diagram \textit{Deployment}}
+
+Diagram ini akan menjelaskan bagaimana sistem aplikasi ditempatkan, dan konfigurasi sistem seperti apa saja yang diperlukan pada perangkat keras agar sistem dapat berjalan sebagaimana mestinya. Diagram \textit{deployment} untuk sistem aplikasi ini seperti terlihat pada gambar \ref{fig:uml-deployment} :
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./resources/diagram/uml-deployment}
+  \caption{Diagram \textit{Deployment}}
+  \label{fig:uml-deployment}
+\end{figure}
+
+Sebagaimana terlihat pada diagram, bahwa nantinya sistem ini yang bernama ws-pbb akan dipasangkan pada \textit{server} aplikasi yang memiliki aplikasi server bernama Apache Tomcat versi 7.
+
+Kebutuhan akan pustaka sebetulnya sudah secara otomatis terkait pada sistem aplikasi yang dibangun dengan menggunakan manajemen pustaka Maven. Sedangkan \textit{file} konfigurasi web.xml terbentuk secara otomatis melalui manajemen pustaka Maven.
+
+Dalam diagram diperlihatkan bahwa nantinya sistem aplikasi akan berinteraksi dengan sistem basis data pada \textit{server} basis data, dimana sistem basis data yang digunakan adalah Oracle 11g, dengan tabel-tabel dan \textit{store procedure} yang disebutkan dalam diagram.
 
 \section{SUMBER DAYA MANUSIA}
 
